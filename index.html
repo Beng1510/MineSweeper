@@ -8,13 +8,45 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 
-<body>
+<body onload="initGame()" >
+    <div class="heading">
+        <h1>Ben's Mine Sweeper Game</h1>
+        
+        <div onclick="initGame()" class="smiley-container"></div>
+        <div class="timer-div"></div>
+    </div>
 
-    <h1 class="header1">LET'S PLAY!</h1>
+   
+</div>
+    
+    <h1 class="header1">Choose Level</h1>
+   
+    <h3 class="mine-counter"></h3>
+    <h3 class="flag-counter"></h3>
+    
+ 
 
-    <table>
+    <div class="levels">
+        <button class="button level-button-1" value="Easy" onclick="chooseLevel(this)">Easy</button>
+        <button class="button level-button-2" value="Medium" onclick="chooseLevel(this)">Medium</button>
+        <button class="button level-button-3" value="Hard" onclick="chooseLevel(this)">Hard</button>
+</div>
+    <!-- <table>
         <tbody class="board"></tbody>
-    </table>
+    </table> -->
+
+    <div class="game-board"></div>
+    
+   
+
+<div class="game-over">
+    <p class="game-over">GAME OVER!!!</p>
+</div>
+
+<div class="winner">
+    <p class="winner">YOU WIN!!!</p>
+</div>
+
 
     <script src="js/utils.js"></script>
     <script src="js/game.js"></script>
