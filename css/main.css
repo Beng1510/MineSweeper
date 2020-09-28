@@ -5,6 +5,7 @@ body {
     margin: 0 auto;
 }
 
+
 .heading {
     padding-top: 20px;
 }
@@ -54,8 +55,6 @@ h1 {
     margin: 0;
 }
 
-
-
 .button {
     margin-left: 20px;
     margin-left: 20px;
@@ -72,7 +71,6 @@ h1 {
     background-color: lightsalmon;
     margin: 0 auto;
     width: 500px;
-    
 }
 
 .flag-counter {
@@ -82,8 +80,8 @@ h1 {
     margin-bottom: 20px;
     width: 500px;
     background-color: lightskyblue;
-    
 }
+
 .levels {
     width: 500px;
     margin: 0 auto;
@@ -170,3 +168,15 @@ button {
     height: 100px;
     padding-top: 40px;
 }
+
+.lives {
+    height: 40px;
+    width: 180px;
+    font-weight: 400;
+    margin: 10px auto;
+    font-size: 30px;
+    border-radius: 15px;
+    color: white;
+    background-color: lightcoral;
+    text-align: center;
+    padding: 6px;

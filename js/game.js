@@ -5,7 +5,8 @@ const PLAYER = '😊';
 const LOSER = '😭';
 const HINT = '💡';
 
-
+var gLives = 3;
+var gElLivesModal = document.querySelector('.lives');
 var gIsTimerOn = false;
 
 var gElGameOver = document.querySelector('.game-over')
@@ -13,12 +14,9 @@ var gElWinner = document.querySelector('.winner')
 var elMood = document.querySelector('.smiley-container');
 
 var gMinePlaced;
-
-
 var gBoard;
-
-
 var gTimer;
+
 
 var gLevel = {
     SIZE: 4,
@@ -55,6 +53,8 @@ function initGame() {
     gElWinner.style.display = 'none'
     endTime()
     renderTime()
+    gLives = 3;
+    renderLives(gLives)
     console.log('begin board', gBoard);
 }
 
@@ -104,8 +104,7 @@ function renderBoard(board, selector) {
 
 function cellClicked(elCell, i, j) {
     console.log('clicked elCell', elCell);
-    // var cellCoord = getCellCoord(elCell.id);
-    // console.log('cellCoord',cellCoord);
+   
 
     if (!gGame.isOn) return
     if (gBoard[i][j].isMarked) {
@@ -126,12 +125,25 @@ function cellClicked(elCell, i, j) {
     if (!gBoard[i][j].isShown) {
         gBoard[i][j].isShown = true;
         gGame.shownCount++
-        if (gBoard[i][j].isMine) {
-            revealMines()
+        if (gBoard[i][j].isMine && gLives === 1) {
+            showMines()
             elCell.style.backgroundColor = 'red'
-            console.log('BOOM GAME OVER');
+            var elLives = document.querySelector('.lives')
+            elLives.innerHTML = 'BOOM!'
             gGame.isOn = false
-            gElGameOver.style.display = 'block';
+
+
+        } else if (gBoard[i][j].isMine && gLives > 1) {
+            gLives--
+            renderLives(gLives)
+            gGame.shownCount--
+            gBoard[i][j].isShown = false;
+            elCell.style.backgroundColor = 'red'
+            elCell.innerHTML = MINE
+            setTimeout(function () {
+                elCell.style.backgroundColor = 'lightsalmon'
+                elCell.innerHTML = ''
+            }, 400)
 
         } else if (gBoard[i][j].minesAroundCount > 0) {
             elCell.innerHTML = gBoard[i][j].minesAroundCount
@@ -145,31 +157,7 @@ function cellClicked(elCell, i, j) {
     }
     checkGameOver()
 
-
-    var neighbours = getNegsId(elCell.id)
-    console.log('neighbors', neighbours);
-
-    var pos = getPosFromElId(elCell);
-    var cell = gBoard[pos.i][pos.j];
-
-    // var pos = getCellCoord(elCell.id);
-    // var cell = gBoard[pos.i][pos.j];
-    // console.log('cell',cell);
-
-    console.log('clicked cell', cell);
-    console.log('position', pos);
-    cell.location = pos
-
     console.log('gboard after', gBoard);
-
-    if (cell.isMine === false) {
-        cell.minesAroundCount = setMinesNegsCount(gBoard, pos);
-
-        console.log('number of mines around:', cell.minesAroundCount, 'at location', pos);
-    }
-
-
-
 }
 
 
@@ -196,50 +184,6 @@ function renderMine(board, i, j) {
         }
     }
 }
-
-
-function getPosFromElId(elCell) {
-    var dataSet = elCell.dataset;
-    var posStr = dataSet.pos;
-    var splitted = posStr.split('-');
-    var pos = { i: +splitted[0], j: +splitted[1] };
-    console.log('pos', pos);
-    return pos;
-}
-
-function getNegsId(id) {
-    var row = parseInt(id[0]);
-    var column = parseInt(id[1]);
-    var neighbors = [];
-    neighbors.push((row - 1) + '' + (column - 1));
-    neighbors.push((row - 1) + '' + (column));
-    neighbors.push((row - 1) + '' + (column + 1));
-    neighbors.push((row) + '' + (column - 1));
-    neighbors.push((row) + '' + (column + 1));
-    neighbors.push((row + 1) + '' + (column - 1));
-    neighbors.push((row + 1) + '' + (column));
-    neighbors.push((row + 1) + '' + (column + 1));
-
-    for (var i = 0; i < neighbors.length; i++) {
-        if (neighbors[i].length > 2) {
-            neighbors.splice(i, 1);
-            i--;
-        }
-    }
-    return neighbors;
-}
-
-function getCellCoord(strCellId) {
-    // console.log(strCellId);
-    var pos = {};
-    var parts = strCellId.split('-');
-    // 
-    pos.i = +parts[1]
-    pos.j = +parts[2];
-    return pos;
-}
-
-
 
 
 function cellMarked(elCell, i, j) {
@@ -277,29 +221,6 @@ function cellMarked(elCell, i, j) {
     elFlagCounter.innerText = 'Number of Flags Available: ' + gBoardFlagCount;
 
     checkGameOver()
-
-    // if (gBoard[i][j].isShown === false && gBoardFlagCount !== 0) {
-    //     if (!gBoard[i][j].isMarked) {
-    //         gBoard[i][j].isMarked = true
-    //         elCell.innerText = FLAG;
-
-    //         gBoardFlagCount--
-    //         // if (gBoardMineCount !== 0)
-    //         // gBoardMineCount--
-    //         // console.log('gBoardFlagCount',gBoardFlagCount);
-
-
-    //         // elMineCounter.innerText = 'Number of Mines to Find: ' + gBoardMineCount;
-    //     } else {
-    //         gBoard[i][j].isMarked = false
-    //         elCell.innerText = '';
-    //         gBoardFlagCount++
-    //     }
-    //     elFlagCounter.innerText = 'Number of Flagged Cells: ' + gBoardFlagCount;
-    //     // if (gBoardFlagCount === 0) {
-    //     //     console.log('no more flags');
-    //     // }
-    // }
 }
 
 
@@ -328,8 +249,6 @@ function countMines() {
     }
     renderBoard(gBoard, '.game-board')
 }
-
-
 
 function checkEmptyNegs(positionI, positionJ) {
     for (var i = positionI - 1; i <= positionI + 1; i++) {
@@ -503,7 +422,7 @@ function checkGameOver() {
         endTime()
     } else if (gGame.isOn === false) {
         elMood.innerHTML = LOSER
-        // gElGameOver.style.display = 'none';
+        gElGameOver.style.display = 'block';
         endTime()
     }
 
@@ -532,4 +451,25 @@ function startTime() {
 
 function endTime() {
     clearInterval(gTimer);
+}
+
+function renderLives(lives) {
+    var elLives = document.querySelector('.lives')
+    elLives.innerHTML = `${gLives} Lives Left`
+}
+
+function showMines() {
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[0].length; j++) {
+            var currCell = gBoard[i][j]
+            if (currCell.isMine) {
+                currCell.isShown = true
+                var elCell = document.querySelector(`.cell-${i}-${j}`)
+                elCell.innerHTML = MINE
+                elCell.style.backgroundColor = 'red'
+
+
+            }
+        }
+    }
 }
