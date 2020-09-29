@@ -5,23 +5,13 @@ const PLAYER = '😊';
 const LOSER = '😭';
 const HINT = '💡';
 
-var gLives = 3;
-var gElLivesModal = document.querySelector('.lives');
 var gIsTimerOn = false;
-
-var gElGameOver = document.querySelector('.game-over')
-var gElWinner = document.querySelector('.winner')
-var elMood = document.querySelector('.smiley-container');
-
-var gMinePlaced;
-var gBoard;
-var gTimer;
-
 
 var gLevel = {
     SIZE: 4,
     MINES: 2
 };
+
 var gSize = gLevel.SIZE
 
 var gGame = {
@@ -30,15 +20,21 @@ var gGame = {
     markedCount: 0,
     secsPassed: 0
 };
-// var gBoardSize = 4;
+
+var gBoard;
+var gTimer;
+var gLives = 3;
 var gBoardFlagCount;
 var gBoardMineCount;
 var gBoard;
-var gCells = []
+// var gCells = []
+
+var gElLivesModal = document.querySelector('.lives');
+var gElGameOver = document.querySelector('.game-over')
+var gElWinner = document.querySelector('.winner')
+var elMood = document.querySelector('.smiley-container');
 var elFlagCounter = document.querySelector(".flag-counter");
 var elMineCounter = document.querySelector(".mine-counter");
-
-
 
 
 function initGame() {
@@ -104,7 +100,7 @@ function renderBoard(board, selector) {
 
 function cellClicked(elCell, i, j) {
     console.log('clicked elCell', elCell);
-   
+
 
     if (!gGame.isOn) return
     if (gBoard[i][j].isMarked) {
@@ -442,7 +438,7 @@ function revealCell(coord) {
 
 
 function startTime() {
-    gTimer = setInterval(() => {
+    gTimer = setInterval(function() {
         gGame.secsPassed++
         renderTime();
     }, 1000);
